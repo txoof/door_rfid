@@ -37,7 +37,6 @@ module arduinoMini(center = true, locate = false, centerV = false) {
   trans = center == false ? 
     [0, 0, transV] : [-miniBoard[0]/2, -miniBoard[1]/2, transV];
 
-  echo(trans);
 
   translate(trans)
   difference() {
