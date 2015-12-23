@@ -35,17 +35,7 @@ lcdDisplayDim = [71.37, 26.42, 5];
 lcdDispLocation = [40.39, 32.51, bZ]; //center of lcd display
 
 // z dimensions based on drawings, not on actual board
-
-/*
-buttonBase = [6.2, 6.2, 3.3]; // dimensions of base
-buttonKnobDia = 3.5; // diameter of knob
-buttonKnobZ = 4.3; // height of knob from bottom of base
-//buttonKnobZ = 0.8; 
-buttonStandoffZ = 0.5; // standoffs around knob base
-buttonStandoffX = 4.6;  
-*/
-
-//Locations relative to axis
+//Locations relative to origin
 buttonLocations = [ [3.81, 6.99, bZ], 
                     [11.43, 3.56, bZ],
                     [11.43, 10.16, bZ], 
@@ -53,52 +43,7 @@ buttonLocations = [ [3.81, 6.99, bZ],
                     [27.94, 10.16, bZ], 
                     [75.4, 3.3, bZ] ];
 
-trimPotDim = [6.8, 8.1, 7.6];
 trimPotLocation = [[75.4, 10.4, bZ]];
-
-
-/*
-module button(locate = false, center = false) {
-  $fn = 36;
-  // center around the volume of the base or move so base sits at origin
-  trans = center == false ? [0, 0, buttonBase[2]/2] : [0, 0, 0];
-
-  translate(trans) //move the object to the location set above
-  union() {
-    color("brown")
-      cube(buttonBase, center = true);
-    translate([0, 0, buttonBase[2]/2])
-      color("darkgray")
-      cylinder(r = buttonKnobDia/2, h = buttonKnobZ, center = true);
-    translate([0, 0, buttonStandoffZ/2])
-      color("silver")
-      cylinder(r = buttonStandoffX/2, h = buttonBase[2] + buttonStandoffZ, center = true);
-    // add a long cylinder to help locate the center of the button in another object
-    if (locate) {
-      color("red")
-      cylinder(h = buttonKnobZ*20, r = .1, center = true);
-    }
-  }
-  
-}
-
-
-module trimPot(locate = false, center = false) {
-  $fn = 36;
-  trans = center == false ? [0, 0, trimPotDim[2]/2] : [0, 0, 0];
-
-  translate(trans)
-  union() {
-    color("orange")
-      cube(trimPotDim, center=true);
-    if (locate) {
-      color("red")
-        cylinder(h = trimPotDim[2]*20, r = .1, center=true);
-    }
-  }
-}
-
-*/
 
 module lcdDisplay(center = false) {
   trans = center == false ? [0, 0, lcdDisplayDim[2]/2] : [0, 0, 0];
@@ -152,5 +97,3 @@ module lcdShieldModel(locate = false) {
 
 
 lcdShieldModel(locate = false);
-//button();
-//lcdDisplay();
