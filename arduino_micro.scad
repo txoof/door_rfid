@@ -10,8 +10,8 @@ use <../libraries/header_pins.scad>
 use <../libraries/micro_usb.scad>
 
 /*[Board Dimensions]*/
-miniBoard = [17.78, 48.26, 1.5];
-bZ = miniBoard[2]; // Z height - thickness of board PCB
+microBoard = [17.78, 48.26, 1.5];
+bZ = microBoard[2]; // Z height - thickness of board PCB
 
 buttonLocation = [6.22, 43.05, bZ];
 
@@ -27,22 +27,22 @@ headerPinLocation = [12.7, 43.18, bZ];
 
 usbMicroLocation = [8.89, 1.45, bZ];
 
-module arduinoMini(center = true, locate = false, centerV = false) {
+module arduinoMicro(center = true, locate = false, centerV = false) {
 
   // vertically center (z axis)
   transV = centerV == false ?
-    0 : -miniBoard[2]/2;
+    0 : -microBoard[2]/2;
 
   // center board at origin 
   trans = center == false ? 
-    [0, 0, transV] : [-miniBoard[0]/2, -miniBoard[1]/2, transV];
+    [0, 0, transV] : [-microBoard[0]/2, -microBoard[1]/2, transV];
 
 
   translate(trans)
   difference() {
     union() {
       color("Teal")
-        cube(miniBoard);
+        cube(microBoard);
       translate(buttonLocation)
         tactileSwitch(locate = locate);    
 
@@ -72,7 +72,8 @@ module arduinoMini(center = true, locate = false, centerV = false) {
         cylinder(r = 0.1, h = bZ*20, center = true); 
     }
   }
+  echo ("micro board dimensions:", microBoard);
 }
 
-arduinoMini();
+arduinoMicro();
 

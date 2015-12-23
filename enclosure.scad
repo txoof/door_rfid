@@ -4,13 +4,12 @@
 */
 
 use <./lcd_sheild.scad>
+use <./arduino_micro.scad>
 include <../libraries/nuts_and_bolts.scad>
 
 
-boltHoles =  [[2.92, 48.01, 0], [2.92, 17.02, 0], [77.85, 48.01, 0], [77.84, 17.02]];
-
-
-
+rotate([0, 0, -90])
+  arduinoMicro(locate = true);
 lcdShield(locate = true);
 
 /*
