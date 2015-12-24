@@ -11,13 +11,18 @@ include <../libraries/nuts_and_bolts.scad>
 
 // cuts that fall completely inside the edge
 module insideCuts(length, finger, cutD, uDiv) {
+  bolt = 15;
   numFinger = floor(uDiv/2);
   numCuts = ceil(uDiv/2);
 
   // draw rectangles to make slots
   for (i=[0:numCuts-1]) {
     translate([i*finger*2, 0, 0])
+    union() {
       square([finger, cutD]);
+      translate([finger/2, cutD*2-12.5, 0])
+        tSlot(size = m3, bolt = bolt, material = cutD);
+    }
   }
 }
 
@@ -30,17 +35,27 @@ module outsideCuts(length, finger, cutD, uDiv) {
   // amount of padding to add to the itterative placement of cuts
   // this is the extra long cut at either end
   padding = endCut+finger;
-
+  
+  // first cut - large
   square([endCut, cutD]);
 
   for (i = [0:numCuts]) {
     if (i < numCuts) {
+      // finger width cut
       translate([i*(finger*2)+padding, 0, 0])
         square([finger, cutD]);
+      
+
     } else {
+      // last cut - large
       translate([i*finger*2+padding, 0, 0])
         square([endCut, cutD]);
     }
+    for (j = [0:numFinger]) {
+      translate([i*finger*2+finger/2+padding-finger, 3/2, 0])
+        mBolt(m3, tollerance = 0.2);
+    }
+
   }
 }
 
@@ -64,13 +79,14 @@ module faceA(size, finger, lidFinger, material, usableDiv, usableDivLid) {
     translate([-uDivLX*lidFinger/2, boxZ/2-material, 0])
       insideCuts(length = boxX, finger = lidFinger, cutD = material, uDiv = uDivLX);
 
-    translate([-uDivX*finger/2, -boxZ/2, 0])
+    translate([-uDivX*finger/2, -boxZ/2+material, 0])
+      rotate([180, 0, 0])
       insideCuts(length = boxX, finger = finger, cutD = material, uDiv = uDivX);
 
     // Z+/- edge (Y axis in OpenSCAD)
     translate([boxX/2-material, uDivZ*finger/2, 0]) rotate([0, 0, -90])
       insideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
-    translate([-boxX/2, uDivZ*finger/2, 0]) rotate([0, 0, -90])
+    translate([-boxX/2+material, uDivZ*finger/2, 0]) rotate([180, 0, -90])
       insideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
   } // end difference
 }
@@ -100,7 +116,7 @@ module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid, lid = f
     // Y+/- edge 
     translate([boxX/2-material, uDivY*myFinger/2, 0]) rotate([0, 0, -90])
       insideCuts(length = boxY, finger = myFinger, cutD = material, uDiv = uDivY);      
-    translate([-boxX/2, uDivY*myFinger/2, 0]) rotate([0, 0, -90])
+    translate([-boxX/2+material, uDivY*myFinger/2, 0]) rotate([180, 0, -90])
       insideCuts(length = boxY, finger = myFinger, cutD = material, uDiv = uDivY);      
   }
   
@@ -164,7 +180,7 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
     color("blue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid);
-  translate([boxX/2+boxY/2+separation, -yDisplace, 0])
+  translate([boxX/2+boxY/2+separation, -yDisplace+material, 0])
     color("darkblue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid);
@@ -270,4 +286,4 @@ module fingerBox(size = [50, 80, 60], finger = 5,
   
 }
 
-fingerBox(size = [100, 70, 60], finger = 15, lidFinger = 20, 2D = true);
+fingerBox(size = [100, 70, 60], finger = 10, lidFinger = 10, 2D = true);

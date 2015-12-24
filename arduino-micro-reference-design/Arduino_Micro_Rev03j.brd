@@ -227,6 +227,7 @@
 <dimension x1="8.89" y1="1.4478" x2="17.78" y2="0" x3="21.844" y3="0.7239" textsize="1.778" layer="47" dtype="vertical"/>
 <dimension x1="0" y1="0" x2="12.7" y2="43.18" x3="26.416" y3="21.59" textsize="1.778" layer="47" dtype="vertical"/>
 <dimension x1="12.7" y1="43.18" x2="0" y2="48.26" x3="6.35" y3="57.7215" textsize="1.778" layer="47" dtype="horizontal"/>
+<dimension x1="16.116425" y1="47.442878125" x2="16.903575" y2="46.537121875" x3="21.8439875" y3="51.625515625" textsize="1.778" layer="47" dtype="diameter"/>
 </plain>
 <libraries>
 <library name="SparkFun">
