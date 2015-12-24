@@ -3,6 +3,14 @@
   http://www.thingiverse.com/thing:448592
   Aaron Ciuffo
   24 December 2015 
+  
+  The thrown together model does not render the tslots correctly.
+
+  Issues:
+    * bolt hole is ON the edge of each tab; this will not cut properly
+      - move hole in a bit
+      - add a bit to each tab
+
 */
 
 
@@ -51,6 +59,8 @@ module outsideCuts(length, finger, cutD, uDiv) {
       translate([i*finger*2+padding, 0, 0])
         square([endCut, cutD]);
     }
+
+    // bolt holes
     for (j = [0:numFinger]) {
       translate([i*finger*2+finger/2+padding-finger, 3/2, 0])
         mBolt2D(m3, tollerance = 0.15);
@@ -59,6 +69,18 @@ module outsideCuts(length, finger, cutD, uDiv) {
   }
 }
 
+// extend tabs that have a bolt hole to make them more robust
+module extendTab(length, finger, cutD, uDiv, extend = 3) {
+  numFinger = ceil(uDiv/2);
+ 
+  endCut = (length-uDiv*finger)/2;
+  padding = endCut+finger;
+
+  for (i = [0:numFinger-1]) {
+    translate([i*finger*2+finger/2+padding-finger, 0, 0])
+      square([finger, extend]);
+  }
+}
 
 // Face A (X and Z dimensions)
 // front and back face
@@ -103,13 +125,30 @@ module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid, lid = f
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
-  
+ 
+  extend = 1.5; // amount to extend tabs that have bolt holes
+
   difference() {
-    square([boxX, boxY], center = true);
+    union() {
+      square([boxX, boxY], center = true);
+
+      // extend the tabs that have holes
+      // +X side
+      translate([-boxX/2-finger/2, boxY/2, 0])
+        extendTab(length = boxX, finger = myFinger, cutD = material, 
+                  uDiv = uDivX, extend = extend);
+      translate([-boxX/2-finger/2, -boxY/2-extend, 0])
+        extendTab(length = boxX, finger = myFinger, cutD = material, 
+                  uDiv = uDivX, extend = extend);
+
+    }
 
     // X+/- edge
     translate([-boxX/2, boxY/2-material, 0])
       outsideCuts(length = boxX, finger = myFinger, cutD = material, uDiv = uDivX);
+
+    //add extend tabs here
+
     translate([-boxX/2, -boxY/2, 0])
       outsideCuts(length = boxX, finger = myFinger, cutD = material, uDiv = uDivX);
 
@@ -136,8 +175,37 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
   boxY = size[1];
   boxZ = size[2];
 
+  extend = 1.5; // amount to extend tabs that have bolt holes
+  
+
   difference() {
-    square([boxY, boxZ], center = true);
+    union() {
+      square([boxY, boxZ], center = true);
+
+
+      // extend the tabs to provide space for the bolt holes
+      // +X edge - (lid) - 
+      translate([-boxY/2-finger/2, boxZ/2, 0])
+        extendTab(length = boxY, finger = lidFinger, cutD = material, 
+                  uDiv = uDivLY, extend = extend);
+      // -X edge (bottom)
+      translate([-boxY/2-finger/2, -boxZ/2-material/2])
+        extendTab(length = boxY, finger = finger, cutD = material,
+                  uDiv = uDivY, extend = extend);
+      
+      // -Y edge
+      translate([-boxY/2-extend, boxZ/2+finger/2, 0])
+        rotate([0, 0, -90])
+        extendTab(length = boxZ, finger = finger, cutD = material,
+                  uDiv = uDivZ, extend = extend);
+  
+      // +Y edge       
+      translate([boxY/2, boxZ/2+finger/2, 0])
+        rotate([0, 0, -90])
+        extendTab(length = boxZ, finger = finger, cutD = material,
+                  uDiv = uDivZ, extend = extend);
+      
+    }
 
     //Y+/- edge (X axis in OpenSCAD)
     // lid edge
@@ -163,7 +231,7 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
   boxZ = size[2];
 
   //separation of pieces
-  separation = 1.5;
+  separation = 3;
   // calculate the most efficient layout
   yDisplace = boxY > boxZ ? boxY : boxZ + separation;
 
@@ -285,9 +353,9 @@ module fingerBox(size = [50, 80, 60], finger = 5,
 
   
 }
+d = true;
 
 //d = false;
-d = true;
-fing = 20;
+fing = 10;
 
-fingerBox(size = [100, 70, 60], finger = fing, lidFinger = fing, 2D = d);
+fingerBox(size = [103, 75, 62], finger = fing, lidFinger = fing, 2D = d);
