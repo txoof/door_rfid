@@ -1,3 +1,13 @@
+/*
+  Box with fingerjoints - Based on earlier version of Finger Joint Box
+  http://www.thingiverse.com/thing:448592
+  Aaron Ciuffo
+  24 December 2015 
+*/
+
+
+include <../libraries/nuts_and_bolts.scad>
+
 
 // cuts that fall completely inside the edge
 module insideCuts(length, finger, cutD, uDiv) {
