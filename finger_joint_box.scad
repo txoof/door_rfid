@@ -7,7 +7,7 @@
   The thrown together model does not render the tslots correctly.
 
   Issues:
-    * bolt hole is ON the edge of each tab; this will not cut properly
+    X bolt hole is ON the edge of each tab; this will not cut properly
       - move hole in a bit
       - add a bit to each tab
 
@@ -16,10 +16,22 @@
 
 include <../libraries/nuts_and_bolts.scad>
 
+module addBolts(length, finger, cutD, uDiv) {
+  bolt = 10;
+  numCuts = ceil(uDiv/2);
+
+  for (i = [0:numCuts-1]) {
+    translate([i*finger*2, 0, 0])
+      tSlotFit(bolt = bolt);
+  }
+}
+
 
 // cuts that fall completely inside the edge
 module insideCuts(length, finger, cutD, uDiv) {
-  bolt = 15;
+  o = 0.001; // overage to make the cuts complete
+
+  bolt = 10;
   numFinger = floor(uDiv/2);
   numCuts = ceil(uDiv/2);
 
@@ -27,14 +39,16 @@ module insideCuts(length, finger, cutD, uDiv) {
   for (i=[0:numCuts-1]) {
     translate([i*finger*2, 0, 0])
     union() {
-      square([finger, cutD]);
-      translate([finger/2, cutD*2-12.5, 0])
-        tSlot2D(size = m3, bolt = bolt, material = cutD);
+      square([finger, cutD+o]);
+      translate([finger/2, -(bolt/2-cutD), 0])
+        tSlot2D(size = m3, bolt = bolt, material = 0);
     }
   }
 }
 
 module outsideCuts(length, finger, cutD, uDiv) {
+  o = 0.001; // overage to make cuts complete
+
   numFinger = ceil(uDiv/2);
   numCuts = floor(uDiv/2);
 
@@ -50,8 +64,8 @@ module outsideCuts(length, finger, cutD, uDiv) {
   for (i = [0:numCuts]) {
     if (i < numCuts) {
       // finger width cut
-      translate([i*(finger*2)+padding, 0, 0])
-        square([finger, cutD]);
+      translate([i*(finger*2)+padding, -o, 0])
+        square([finger, cutD+o]);
       
 
     } else {
@@ -111,6 +125,7 @@ module faceA(size, finger, lidFinger, material, usableDiv, usableDivLid) {
     translate([-boxX/2+material, uDivZ*finger/2, 0]) rotate([180, 0, -90])
       insideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
   } // end difference
+
 }
 
 // Face B (X and Y dimensions)
@@ -185,7 +200,7 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 
       // extend the tabs to provide space for the bolt holes
       // +X edge - (lid) - 
-      translate([-boxY/2-finger/2, boxZ/2, 0])
+      translate([-boxY/2-lidFinger/2, boxZ/2, 0])
         extendTab(length = boxY, finger = lidFinger, cutD = material, 
                   uDiv = uDivLY, extend = extend);
       // -X edge (bottom)
@@ -221,7 +236,6 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
     translate([-boxY/2, boxZ/2, 0]) rotate([0, 0, -90])
       outsideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
   }
-
 }
 
 
@@ -248,7 +262,7 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
     color("blue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid);
-  translate([boxX/2+boxY/2+separation, -yDisplace+material, 0])
+  translate([boxX/2+boxY/2+separation, -yDisplace, 0])
     color("darkblue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid);
@@ -265,10 +279,13 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
             usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
 }
 
+
 module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alpha) {
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
+
+  bolt = 10;
 
   // amount to shift to account for thickness of material
   D = material/2;
@@ -279,11 +296,13 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
 
+/*
   color("lime", alpha = alpha)
     translate([0, 0, boxZ-material])
     linear_extrude(height = material, center = true)
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
+*/
 
 
   color("red", alpha = alpha)
@@ -292,7 +311,13 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     linear_extrude(height = material, center = true)
     faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
          usableDiv = usableDiv, usableDivLid = usableDivLid);
-    
+
+  translate([-finger*floor(usableDiv[0]/2), boxY/2-D, bolt/2-D])
+    rotate([180, 0, 0])
+    addBolts(length = boxY, finger = finger, cutD = material, uDiv = usableDiv[0]);
+
+  translate([-lidFinger*floor(usableDivLid[0]/2), boxY/2-D, boxZ-bolt/2-D])
+    addBolts(length = boxY, finger = lidFinger, cutD = material, uDiv = usableDivLid[0]);
 
   color("darkred", alpha = alpha)
     translate([0, -boxY/2+D, boxZ/2-D])
@@ -300,13 +325,44 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     linear_extrude(height = material, center = true)
     faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
          usableDiv = usableDiv, usableDivLid = usableDivLid);
+
+  translate([-finger*floor(usableDiv[0]/2), -boxY/2+D, bolt/2-D])
+    rotate([180, 0, 0])
+    addBolts(length = boxY, finger = finger, cutD = material, uDiv = usableDiv[0]);
+
+  translate([-lidFinger*floor(usableDivLid[0]/2), -boxY/2+D, boxZ-bolt/2-D])
+    addBolts(length = boxY, finger = lidFinger, cutD = material, uDiv = usableDivLid[0]);
   
-  color("blue", alpha = alpha)
+
+
+  color("yellow", alpha = alpha)
     translate([boxX/2-D, 0, boxZ/2-D])
     rotate([90, 0, 90])
     linear_extrude(height = material, center = true)
     faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
           usableDiv = usableDiv, usableDivLid = usableDivLid);
+
+  // lid bolts
+  translate([boxX/2-bolt/2, -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
+    rotate([90, 0, 90])
+    addBolts(length = boxX, finger = lidFinger, cutD = material, uDiv = usableDivLid[1]);
+
+  // base bolts
+  translate([boxX/2-bolt/2, -finger*floor(usableDiv[1]/2), -D/2])
+    rotate([90, 0, 90])
+    addBolts(length = boxX, finger = finger, cutD = material, uDiv = usableDiv[1]);
+ 
+  // +Y on Z axis bolts
+  translate([boxX/2-bolt/2, boxY/2-D, boxZ/2+finger*floor(usableDiv[2]/2)-D])
+    rotate([0, 90, 0])
+    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+
+  // -Y on Z axis bolts
+  translate([boxX/2-bolt/2, -1*(boxY/2-D), boxZ/2+finger*floor(usableDiv[2]/2)-D])
+    rotate([0, 90, 0])
+    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+
+
 
   color("darkblue", alpha = alpha)
     translate([-boxX/2+D, 0, boxZ/2-D])
@@ -314,6 +370,25 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     linear_extrude(height = material, center = true)
     faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
           usableDiv = usableDiv, usableDivLid = usableDivLid);
+  // lid bolts
+  translate([-1*(boxX/2-bolt/2), -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
+    rotate([-90, 0, 90])
+    addBolts(length = boxX, finger = lidFinger, cutD = material, uDiv = usableDivLid[1]);
+
+  // base bolts
+  translate([-1*(boxX/2-bolt/2), -finger*floor(usableDiv[1]/2), -D/2])
+    rotate([-90, 0, 90])
+    addBolts(length = boxX, finger = finger, cutD = material, uDiv = usableDiv[1]);
+ 
+  // +Y on Z axis bolts
+  translate([-1*(boxX/2-bolt/2), boxY/2-D, boxZ/2+finger*floor(usableDiv[2]/2)-D])
+    rotate([0, 90, 180])
+    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+
+  // -Y on Z axis bolts
+  translate([-1*(boxX/2-bolt/2), -1*(boxY/2-D), boxZ/2+finger*floor(usableDiv[2]/2)-D])
+    rotate([0, 90, 180])
+    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
 
 }
 
@@ -355,7 +430,7 @@ module fingerBox(size = [50, 80, 60], finger = 5,
 }
 d = true;
 
-//d = false;
-fing = 10;
+d = false;
+fing = 20;
 
-fingerBox(size = [103, 75, 62], finger = fing, lidFinger = fing, 2D = d);
+fingerBox(size = [103, 75, 63], finger = fing, lidFinger = fing, 2D = d);
