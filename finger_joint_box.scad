@@ -3,13 +3,20 @@
   http://www.thingiverse.com/thing:448592
   Aaron Ciuffo
   24 December 2015 
-  
-  The thrown together model does not render the tslots correctly.
+ 
+
+  To Do:
+    * work out how to cut holes in front of box
+    * work out proper size
+    * work out openings for wires, placement
+    * work out method for rendering different faces
 
   Issues:
+    * The thrown together model does not render the tslots correctly.
     X bolt hole is ON the edge of each tab; this will not cut properly
       - move hole in a bit
       - add a bit to each tab
+
 
 */
 
