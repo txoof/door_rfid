@@ -21,7 +21,7 @@ module insideCuts(length, finger, cutD, uDiv) {
     union() {
       square([finger, cutD]);
       translate([finger/2, cutD*2-12.5, 0])
-        tSlot(size = m3, bolt = bolt, material = cutD);
+        tSlot2D(size = m3, bolt = bolt, material = cutD);
     }
   }
 }
@@ -53,7 +53,7 @@ module outsideCuts(length, finger, cutD, uDiv) {
     }
     for (j = [0:numFinger]) {
       translate([i*finger*2+finger/2+padding-finger, 3/2, 0])
-        mBolt(m3, tollerance = 0.2);
+        mBolt2D(m3, tollerance = 0.15);
     }
 
   }
@@ -286,4 +286,8 @@ module fingerBox(size = [50, 80, 60], finger = 5,
   
 }
 
-fingerBox(size = [100, 70, 60], finger = 10, lidFinger = 10, 2D = true);
+//d = false;
+d = true;
+fing = 20;
+
+fingerBox(size = [100, 70, 60], finger = fing, lidFinger = fing, 2D = d);
