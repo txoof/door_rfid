@@ -296,13 +296,13 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
 
-/*
+
   color("lime", alpha = alpha)
     translate([0, 0, boxZ-material])
     linear_extrude(height = material, center = true)
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
-*/
+
 
 
   color("red", alpha = alpha)
@@ -335,7 +335,7 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
   
 
 
-  color("yellow", alpha = alpha)
+  color("blue", alpha = alpha)
     translate([boxX/2-D, 0, boxZ/2-D])
     rotate([90, 0, 90])
     linear_extrude(height = material, center = true)
@@ -433,4 +433,4 @@ d = true;
 d = false;
 fing = 20;
 
-fingerBox(size = [103, 75, 63], finger = fing, lidFinger = fing, 2D = d);
+fingerBox(size = [75, 109, 63], finger = fing, lidFinger = fing, 2D = d);
