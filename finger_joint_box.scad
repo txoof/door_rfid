@@ -252,6 +252,76 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 }
 
 
+module bottom(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+ 
+  color("green")
+  faceB(size = size, finger = finger, material = material, lidFinger = lidFinger,
+        usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
+
+}
+
+module top(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+
+  color("lime")
+  faceB(size = size, finger = finger, material = material, lidFinger = lidFinger,
+        usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
+
+}
+
+module front(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+
+  color("darkred")
+  faceA(size = size, finger = finger, material = material, lidFinger = lidFinger,
+       usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+
+
+}
+
+module back(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+  
+  color("red")
+  faceA(size = size, finger = finger, material = material, lidFinger = lidFinger,
+       usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+
+}
+
+
+module right(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+
+  color("blue")
+  faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+        usableDiv = usableDiv, usableDivLid = usableDivLid);
+
+}
+
+module left(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+
+  color("darkblue")
+  faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+        usableDiv = usableDiv, usableDivLid = usableDivLid);
+
+}
+
+
+
 module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
   boxX = size[0];
   boxY = size[1];
@@ -263,35 +333,50 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt
   yDisplace = boxY > boxZ ? boxY : boxZ + separation;
 
   translate([])
-    color("Red")
-      faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//    color("Red")
+      back(size = size, finger = finger, material = material, lidFinger = lidFinger, 
             usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//      faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+
   translate([boxX+separation+boxY+separation, 0, 0])
-    color("darkred")
-      faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//    color("darkred")
+      front(size = size, finger = finger, material = material, lidFinger = lidFinger, 
             usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//      faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([boxX/2+boxY/2+separation, 0, 0])
-    color("blue")
-      faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//    color("blue")
+      right(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//      faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
   translate([boxX/2+boxY/2+separation, -yDisplace, 0])
-    color("darkblue")
-      faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//    color("darkblue")
+      left(size = size, finger = finger, material = material, lidFinger = lidFinger,
             usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//      faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
 
   translate([0, -boxZ/2-yDisplace/2-separation, 0])
-    color("lime")
-      faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//    color("lime")
+      top(size = size, finger = finger, material = material, lidFinger = lidFinger, 
             usableDiv = usableDiv, usableDivLid = usableDivLid, 
             lid = false, bolt = bolt);
+//      faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, 
+//            lid = false, bolt = bolt);
 
   translate([boxX+separation+boxY+separation, -boxZ/2-yDisplace/2-separation, 0])
-    color("green")
-      faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//    color("green")
+      bottom(size = size, finger = finger, material = material, lidFinger = lidFinger, 
             usableDiv = usableDiv, usableDivLid = usableDivLid, 
             lid = false, bolt = bolt);
+//      faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//            usableDiv = usableDiv, usableDivLid = usableDivLid, 
+//            lid = false, bolt = bolt);
 }
 
 
@@ -307,15 +392,19 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
   color("green", alpha = alpha)
     translate([])
     linear_extrude(height = material, center = true)
-    faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+    bottom(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
+//    faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
 
 
   color("lime", alpha = alpha)
     translate([0, 0, boxZ-material])
     linear_extrude(height = material, center = true)
-    faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+    top(size = size, finger = finger, material = material, lidFinger = lidFinger, 
           usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
+//    faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
 
 
 
@@ -323,8 +412,10 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     translate([0, boxY/2-D, boxZ/2-D])
     rotate([90, 0, 0])
     linear_extrude(height = material, center = true)
-    faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+    back(size = size, finger = finger, material = material, lidFinger = lidFinger, 
          usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//    faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//         usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([-finger*floor(usableDiv[0]/2), boxY/2-D, bolt/2-D])
     rotate([180, 0, 0])
@@ -339,8 +430,10 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     translate([0, -boxY/2+D, boxZ/2-D])
     rotate([90, 0, 0])
     linear_extrude(height = material, center = true)
-    faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+    front(size = size, finger = finger, material = material, lidFinger = lidFinger, 
          usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+//    faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
+//         usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([-finger*floor(usableDiv[0]/2), -boxY/2+D, bolt/2-D])
     rotate([180, 0, 0])
@@ -357,8 +450,10 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     translate([boxX/2-D, 0, boxZ/2-D])
     rotate([90, 0, 90])
     linear_extrude(height = material, center = true)
-    faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+    right(size = size, finger = finger, material = material, lidFinger = lidFinger,
           usableDiv = usableDiv, usableDivLid = usableDivLid);
+//    faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//          usableDiv = usableDiv, usableDivLid = usableDivLid);
 
   // lid bolts
   translate([boxX/2-bolt/2, -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
@@ -390,8 +485,10 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     translate([-boxX/2+D, 0, boxZ/2-D])
     rotate([90, 0, 90])
     linear_extrude(height = material, center = true)
-    faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+    left(size = size, finger = finger, material = material, lidFinger = lidFinger,
           usableDiv = usableDiv, usableDivLid = usableDivLid);
+//    faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
+//          usableDiv = usableDiv, usableDivLid = usableDivLid);
   // lid bolts
   translate([-1*(boxX/2-bolt/2), -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
     rotate([-90, 0, 90])
