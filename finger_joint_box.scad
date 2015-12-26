@@ -7,6 +7,8 @@
 
   To Do:
     X get rid of dirty "myBolt" global variable
+    * write each face as separate module (front, back, left, etc.) to make modifications
+      simpler 
 
   Issues:
     * The thrown together model does not render the tslots correctly.
@@ -250,44 +252,46 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 }
 
 
-module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
+module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
 
   //separation of pieces
-  separation = 3;
+  separation = material*2;
   // calculate the most efficient layout
   yDisplace = boxY > boxZ ? boxY : boxZ + separation;
 
   translate([])
     color("Red")
       faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-            usableDiv = usableDiv, usableDivLid = usableDivLid);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
   translate([boxX+separation+boxY+separation, 0, 0])
     color("darkred")
       faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-            usableDiv = usableDiv, usableDivLid = usableDivLid);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([boxX/2+boxY/2+separation, 0, 0])
     color("blue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
-            usableDiv = usableDiv, usableDivLid = usableDivLid);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
   translate([boxX/2+boxY/2+separation, -yDisplace, 0])
     color("darkblue")
       faceC(size = size, finger = finger, material = material, lidFinger = lidFinger,
-            usableDiv = usableDiv, usableDivLid = usableDivLid);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
 
   translate([0, -boxZ/2-yDisplace/2-separation, 0])
     color("lime")
       faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-            usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, 
+            lid = false, bolt = bolt);
 
   translate([boxX+separation+boxY+separation, -boxZ/2-yDisplace/2-separation, 0])
     color("green")
       faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-            usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, 
+            lid = false, bolt = bolt);
 }
 
 
@@ -456,7 +460,7 @@ boltLen = 10;
 
 d = true;
 
-d = false;
+//d = false;
 fing = 16;
 
 // icky global for bolt length 
