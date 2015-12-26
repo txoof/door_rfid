@@ -44,10 +44,13 @@ module lcdDisplay(center = false) {
 }
 
 
-module lcdShield(locate = false, center = true, centerV = false) {
-  echo ("shield dimensions:", lcdBoard);
-  echo ("mounting holes:", lcdHoleLocations);
-  echo ("display height + board:", lcdBoard[2]+lcdDisplayDim[2]);
+module lcdShield(locate = false, center = true, centerV = false, v = false) {
+  if (v) {
+    echo ("LCD Sheild");
+    echo ("shield dimensions:", lcdBoard);
+    echo ("mounting holes:", lcdHoleLocations);
+    echo ("display height + board:", lcdBoard[2]+lcdDisplayDim[2]);
+  }
 
   transV = centerV == true ?
     -lcdBoard[2]/2 : 0; 
@@ -86,9 +89,10 @@ module lcdShield(locate = false, center = true, centerV = false) {
   } // end diff
   if (locate) { // add location spikes for holes
     for (l = lcdHoleLocations) {
+      translate(trans)
       translate(l)
         color("red")
-        cylinder(r = .1, h = bZ*20, center = true);
+        cylinder(r = .1, h = bZ*40, center = true);
     } // end for lcd hole locations
   } 
 }
