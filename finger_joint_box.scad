@@ -326,7 +326,7 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
-
+  
   //separation of pieces
   separation = material*2;
   // calculate the most efficient layout
