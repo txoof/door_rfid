@@ -6,10 +6,7 @@
  
 
   To Do:
-    * work out how to cut holes in front of box
-    * work out proper size
-    * work out openings for wires, placement
-    * work out method for rendering different faces
+    X get rid of dirty "myBolt" global variable
 
   Issues:
     * The thrown together model does not render the tslots correctly.
@@ -23,8 +20,7 @@
 
 include <../libraries/nuts_and_bolts.scad>
 
-module addBolts(length, finger, cutD, uDiv) {
-  bolt = 10;
+module addBolts(length, finger, cutD, uDiv, bolt = 10) {
   numCuts = ceil(uDiv/2);
 
   for (i = [0:numCuts-1]) {
@@ -35,10 +31,11 @@ module addBolts(length, finger, cutD, uDiv) {
 
 
 // cuts that fall completely inside the edge
-module insideCuts(length, finger, cutD, uDiv) {
+module insideCuts(length, finger, cutD, uDiv, bolt) {
   o = 0.001; // overage to make the cuts complete
 
-  bolt = 10;
+  //bolt = 10;
+  //bolt = myBolt;
   numFinger = floor(uDiv/2);
   numCuts = ceil(uDiv/2);
 
@@ -105,7 +102,7 @@ module extendTab(length, finger, cutD, uDiv, extend = 3) {
 
 // Face A (X and Z dimensions)
 // front and back face
-module faceA(size, finger, lidFinger, material, usableDiv, usableDivLid) {
+module faceA(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
   uDivX = usableDiv[0];
   uDivZ = usableDiv[2];
   uDivLX = usableDivLid[0];
@@ -120,24 +117,29 @@ module faceA(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 
     // X+/- edge (X axis in openSCAD)
     translate([-uDivLX*lidFinger/2, boxZ/2-material, 0])
-      insideCuts(length = boxX, finger = lidFinger, cutD = material, uDiv = uDivLX);
+      insideCuts(length = boxX, finger = lidFinger, cutD = material, 
+                uDiv = uDivLX, bolt = bolt);
 
     translate([-uDivX*finger/2, -boxZ/2+material, 0])
       rotate([180, 0, 0])
-      insideCuts(length = boxX, finger = finger, cutD = material, uDiv = uDivX);
+      insideCuts(length = boxX, finger = finger, cutD = material, 
+                uDiv = uDivX, bolt = bolt);
 
     // Z+/- edge (Y axis in OpenSCAD)
     translate([boxX/2-material, uDivZ*finger/2, 0]) rotate([0, 0, -90])
-      insideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
+      insideCuts(length = boxZ, finger = finger, cutD = material, 
+                uDiv = uDivZ, bolt = bolt);
     translate([-boxX/2+material, uDivZ*finger/2, 0]) rotate([180, 0, -90])
-      insideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
+      insideCuts(length = boxZ, finger = finger, cutD = material, 
+                uDiv = uDivZ, bolt = bolt);
   } // end difference
 
 }
 
 // Face B (X and Y dimensions)
 // lid and base
-module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid, lid = false) {
+module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid, 
+            lid = false, bolt) {
   
   // if this is the lid, use different settings than if it is the base
   uDivX = lid == true ? usableDivLid[0] : usableDiv[0];
@@ -176,9 +178,11 @@ module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid, lid = f
 
     // Y+/- edge 
     translate([boxX/2-material, uDivY*myFinger/2, 0]) rotate([0, 0, -90])
-      insideCuts(length = boxY, finger = myFinger, cutD = material, uDiv = uDivY);      
+      insideCuts(length = boxY, finger = myFinger, cutD = material, 
+                uDiv = uDivY, bolt = bolt);      
     translate([-boxX/2+material, uDivY*myFinger/2, 0]) rotate([180, 0, -90])
-      insideCuts(length = boxY, finger = myFinger, cutD = material, uDiv = uDivY);      
+      insideCuts(length = boxY, finger = myFinger, cutD = material, 
+                uDiv = uDivY, bolt = bolt);      
   }
   
 }
@@ -287,12 +291,11 @@ module layout2D(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 }
 
 
-module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alpha) {
+module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, 
+                alpha, bolt = 10) {
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
-
-  bolt = 10;
 
   // amount to shift to account for thickness of material
   D = material/2;
@@ -301,14 +304,14 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     translate([])
     linear_extrude(height = material, center = true)
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
+          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
 
 
   color("lime", alpha = alpha)
     translate([0, 0, boxZ-material])
     linear_extrude(height = material, center = true)
     faceB(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false);
+          usableDiv = usableDiv, usableDivLid = usableDivLid, lid = false, bolt = bolt);
 
 
 
@@ -317,28 +320,32 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
     rotate([90, 0, 0])
     linear_extrude(height = material, center = true)
     faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-         usableDiv = usableDiv, usableDivLid = usableDivLid);
+         usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([-finger*floor(usableDiv[0]/2), boxY/2-D, bolt/2-D])
     rotate([180, 0, 0])
-    addBolts(length = boxY, finger = finger, cutD = material, uDiv = usableDiv[0]);
+    addBolts(length = boxY, finger = finger, cutD = material, 
+            uDiv = usableDiv[0], bolt = bolt);
 
   translate([-lidFinger*floor(usableDivLid[0]/2), boxY/2-D, boxZ-bolt/2-D])
-    addBolts(length = boxY, finger = lidFinger, cutD = material, uDiv = usableDivLid[0]);
+    addBolts(length = boxY, finger = lidFinger, cutD = material, 
+            uDiv = usableDivLid[0], bolt = bolt);
 
   color("darkred", alpha = alpha)
     translate([0, -boxY/2+D, boxZ/2-D])
     rotate([90, 0, 0])
     linear_extrude(height = material, center = true)
     faceA(size = size, finger = finger, material = material, lidFinger = lidFinger, 
-         usableDiv = usableDiv, usableDivLid = usableDivLid);
+         usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
 
   translate([-finger*floor(usableDiv[0]/2), -boxY/2+D, bolt/2-D])
     rotate([180, 0, 0])
-    addBolts(length = boxY, finger = finger, cutD = material, uDiv = usableDiv[0]);
+    addBolts(length = boxY, finger = finger, cutD = material, 
+            uDiv = usableDiv[0], bolt = bolt);
 
   translate([-lidFinger*floor(usableDivLid[0]/2), -boxY/2+D, boxZ-bolt/2-D])
-    addBolts(length = boxY, finger = lidFinger, cutD = material, uDiv = usableDivLid[0]);
+    addBolts(length = boxY, finger = lidFinger, cutD = material, 
+            uDiv = usableDivLid[0], bolt = bolt);
   
 
 
@@ -352,22 +359,26 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
   // lid bolts
   translate([boxX/2-bolt/2, -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
     rotate([90, 0, 90])
-    addBolts(length = boxX, finger = lidFinger, cutD = material, uDiv = usableDivLid[1]);
+    addBolts(length = boxX, finger = lidFinger, cutD = material, 
+            uDiv = usableDivLid[1], bolt = bolt);
 
   // base bolts
   translate([boxX/2-bolt/2, -finger*floor(usableDiv[1]/2), -D/2])
     rotate([90, 0, 90])
-    addBolts(length = boxX, finger = finger, cutD = material, uDiv = usableDiv[1]);
+    addBolts(length = boxX, finger = finger, cutD = material, 
+            uDiv = usableDiv[1], bolt = bolt);
  
   // +Y on Z axis bolts
   translate([boxX/2-bolt/2, boxY/2-D, boxZ/2+finger*floor(usableDiv[2]/2)-D])
     rotate([0, 90, 0])
-    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+    addBolts(length = boxZ, finger = finger, cutD = material, 
+            uDiv = usableDiv[2], bolt = bolt);
 
   // -Y on Z axis bolts
   translate([boxX/2-bolt/2, -1*(boxY/2-D), boxZ/2+finger*floor(usableDiv[2]/2)-D])
     rotate([0, 90, 0])
-    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+    addBolts(length = boxZ, finger = finger, cutD = material, 
+            uDiv = usableDiv[2], bolt = bolt);
 
 
 
@@ -380,28 +391,32 @@ module layout3D(size, finger, lidFinger, material, usableDiv, usableDivLid, alph
   // lid bolts
   translate([-1*(boxX/2-bolt/2), -lidFinger*floor(usableDivLid[1]/2), boxZ-D*2])
     rotate([-90, 0, 90])
-    addBolts(length = boxX, finger = lidFinger, cutD = material, uDiv = usableDivLid[1]);
+    addBolts(length = boxX, finger = lidFinger, cutD = material, 
+            uDiv = usableDivLid[1], bolt = bolt);
 
   // base bolts
   translate([-1*(boxX/2-bolt/2), -finger*floor(usableDiv[1]/2), -D/2])
     rotate([-90, 0, 90])
-    addBolts(length = boxX, finger = finger, cutD = material, uDiv = usableDiv[1]);
+    addBolts(length = boxX, finger = finger, cutD = material, 
+            uDiv = usableDiv[1], bolt = bolt);
  
   // +Y on Z axis bolts
   translate([-1*(boxX/2-bolt/2), boxY/2-D, boxZ/2+finger*floor(usableDiv[2]/2)-D])
     rotate([0, 90, 180])
-    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+    addBolts(length = boxZ, finger = finger, cutD = material, 
+            uDiv = usableDiv[2], bolt = bolt);
 
   // -Y on Z axis bolts
   translate([-1*(boxX/2-bolt/2), -1*(boxY/2-D), boxZ/2+finger*floor(usableDiv[2]/2)-D])
     rotate([0, 90, 180])
-    addBolts(length = boxZ, finger = finger, cutD = material, uDiv = usableDiv[2]);
+    addBolts(length = boxZ, finger = finger, cutD = material, 
+            uDiv = usableDiv[2], bolt = bolt);
 
 }
 
 
-module fingerBox(size = [50, 80, 60], finger = 5, 
-                lidFinger = 10, material = 3, 2D = true, alpha = .5) {
+module fingerBox(size = [80, 50, 60], finger = 5, 
+                lidFinger = 10, material = 3, 2D = true, alpha = .5, bolt = 10) {
   boxX = size[0];
   boxY = size[1];
   boxZ = size[2];
@@ -427,17 +442,24 @@ module fingerBox(size = [50, 80, 60], finger = 5,
 
   if (2D) {
     layout2D(size = size, finger = finger, lidFinger = lidFinger, material = material,
-            usableDiv = usableDiv, usableDivLid = usableDivLid);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
   } else {
     layout3D(size = size, finger = finger, lidFinger = lidFinger, material = material,
-            usableDiv = usableDiv, usableDivLid = usableDivLid, alpha = alpha);
+            usableDiv = usableDiv, usableDivLid = usableDivLid, 
+            alpha = alpha, bolt = bolt);
   }
 
   
 }
+
+boltLen = 10;
+
 d = true;
 
 d = false;
-fing = 20;
+fing = 16;
 
-fingerBox(size = [75, 109, 63], finger = fing, lidFinger = fing, 2D = d);
+// icky global for bolt length 
+
+fingerBox(size = [83, 53, 63], material =  2.3, finger = fing, 
+  lidFinger = fing, 2D = d, bolt = boltLen);
