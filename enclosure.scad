@@ -2,6 +2,11 @@
   RFID Arduino Enclosure
 
 
+  TO DO:
+    * add wire routing for power, door access, RFID, etc.
+    * check clearances with real shields
+    * 
+
 */
 
 
