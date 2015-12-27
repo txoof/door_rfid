@@ -62,35 +62,35 @@ module lcdShield(center = true, centerV = false, locate = false,
     [-lcdBoard[0]/2, -lcdBoard[1]/2, transV] : [0, 0, transV];
 
   if (2D == false) {
-  translate(trans)
-  difference() {
-    union() {
-      color("lightblue")
-      cube(lcdBoard);
+    translate(trans)
+    difference() {
+      union() {
+        color("lightblue")
+        cube(lcdBoard);
 
-      // tactile buttons
-      for (i = buttonLocations) {
-        translate(i)
-          //button(locate = locate);
-          tactileSwitch(locate = locate);
-      } // end for buttions
+        // tactile buttons
+        for (i = buttonLocations) {
+          translate(i)
+            //button(locate = locate);
+            tactileSwitch(locate = locate);
+        } // end for buttions
 
-    // Trim Pot(s)
-      translate(trimPotLocation)
-        trimPot(locate = locate);
-      
-    // LCD screen
-      translate(lcdDispLocation)
-        lcdDisplay();
-    } // end union
-  
-    for (k = lcdHoleLocations) {
-      translate(k)
-        cylinder(r = lcdHoleDia/2, h = bZ*10, center = true, $fn = 36);
-    } // end for lcd hole locations
+      // Trim Pot(s)
+        translate(trimPotLocation)
+          trimPot(locate = locate);
+        
+      // LCD screen
+        translate(lcdDispLocation)
+          lcdDisplay();
+      } // end union
+    
+      for (k = lcdHoleLocations) {
+        translate(k)
+          cylinder(r = lcdHoleDia/2, h = bZ*10, center = true, $fn = 36);
+      } // end for lcd hole locations
 
 
-  } // end diff
+    } // end diff
   } // end if 2D
   if (locate) { // add location spikes for holes
     for (l = lcdHoleLocations) {
