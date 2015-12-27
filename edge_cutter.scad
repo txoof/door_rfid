@@ -7,8 +7,8 @@ module edgeCut(finger = 5, material = 3, numFingers = 4, edgeLen = 100, center =
 
   fingerSpan = (numFingers*2-1)*finger;
   edgeCut = (edgeLen - fingerSpan)/2;
-  echo (fingerSpan, edgeCut);
 
+  o = .001;
   // remember to add the edge cut into the center calculation
   trans = center == true ? 
     [-edgeLen/2, -material/2, 0] : [0, 0, 0];
@@ -16,16 +16,16 @@ module edgeCut(finger = 5, material = 3, numFingers = 4, edgeLen = 100, center =
   translate(trans)
   union() {  // treat this as one object to make translation easier
     
-    square([edgeCut, material]); // first cut
+    square([edgeCut, material+o]); // first cut
 
     //fingers
     for (i = [0:numFingers-2]) {
       translate([edgeCut+finger+i*finger*2, 0, 0])
-        square([finger, material]);
+        square([finger, material+o]);
     }
 
     translate([edgeCut+fingerSpan, 0, 0])
-      square([edgeCut, material]); // last cut
+      square([edgeCut, material+o]); // last cut
   }
   
 }
