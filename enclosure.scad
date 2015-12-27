@@ -6,7 +6,8 @@
 
 
 use <./finger_joint_box.scad>
-
+use <./lcd_shield.scad>
+use <../edge_cutter.scad>
 
 module bottom(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
   boxX = size[0];
@@ -36,9 +37,27 @@ module front(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt) {
   boxZ = size[2];
 
   color("darkred")
-  faceA(size = size, finger = finger, material = material, lidFinger = lidFinger,
-       usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+  difference() {
+    faceA(size = size, finger = finger, material = material, lidFinger = lidFinger,
+         usableDiv = usableDiv, usableDivLid = usableDivLid, bolt = bolt);
+    
+    boltDia = 3;
 
+    // Screen and button opening - curved rectangle
+    lcdDispDim = [71.37, 26.42, 5];
+    opening = [81, 54-boltDia*2]; // decrease the size of the opening to cover board
+    cRad = 3; 
+    
+    translate([0, -boltDia, 0]) // shift the opening down one bolt diameter
+    hull() {
+      for (i = [-1, 1]){
+        for (j = [-1, 1]) {
+          translate([i*(opening[0]/2-cRad), j*(opening[1]/2-cRad), 0])
+            circle(r = cRad, center = true, $fn = 36);
+        } // end j
+      } // end i
+    } // end hull
+  } // end diff
 
 }
 
@@ -99,6 +118,7 @@ module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     linear_extrude(height = material, center = true)
     top(size, finger, lidFinger, material, usableDiv, usableDivLid, bolt);
 
+/*
   color("red", alpha = alpha)
     translate([0, boxY/2-D, boxZ/2-D])
     rotate([90, 0, 0])
@@ -114,7 +134,7 @@ module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
   translate([-lidFinger*floor(usableDivLid[0]/2), boxY/2-D, boxZ-bolt/2-D])
     addBolts(length = boxY, finger = lidFinger, cutD = material,
             uDiv = usableDivLid[0], bolt = bolt);
-
+*/
 
   color("darkred", alpha = alpha)
     translate([0, -boxY/2+D, boxZ/2-D])
@@ -131,7 +151,7 @@ module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     addBolts(length = boxY, finger = lidFinger, cutD = material,
             uDiv = usableDivLid[0], bolt = bolt);
 
-
+/*
   color("blue", alpha = alpha)
     translate([boxX/2-D, 0, boxZ/2-D])
     rotate([90, 0, 90])
@@ -161,8 +181,7 @@ module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     rotate([0, 90, 0])
     addBolts(length = boxZ, finger = finger, cutD = material,
             uDiv = usableDiv[2], bolt = bolt);
-
-
+*/
 
   color("darkblue", alpha = alpha)
     translate([-boxX/2+D, 0, boxZ/2-D])
@@ -193,6 +212,10 @@ module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
     rotate([0, 90, 180])
     addBolts(length = boxZ, finger = finger, cutD = material,
             uDiv = usableDiv[2], bolt = bolt);
+
+  // Lay out additional parts for dimensioning 
+  partsLayout(size, material);
+
 
 }
 
@@ -234,12 +257,24 @@ module myLayout2D(size, finger, lidFinger, material, usableDiv, usableDivLid,
         usableDiv = usableDiv, usableDivLid = usableDivLid,
         lid = false, bolt = bolt); 
 
+
+}
+
+module partsLayout(size, material) {
+  boxX = size[0];
+  boxY = size[1];
+  boxZ = size[2];
+
+  D = material/2; // displace by this much to account for thickness of material
+
+  translate([0, -boxY/2+D+8, boxZ/2-D])
+    rotate([90, 0, 0])
+    lcdShield(center = true, v = true, locate = true, locateDia = 3.3);
 }
 
 
-
 module myEnclosure(
-  size = [80, 50, 60],
+  size = [110, 50, 82],
   finger = 16.6,
   lidFinger = 10,
   material = 3,
