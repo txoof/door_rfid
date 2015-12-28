@@ -171,8 +171,6 @@ module lcdSupport(size, material) {
   }
 }
 
-//!lcdSupport(size = [110, 50, 82], material = 3);
-
 module myLayout3D(size, finger, lidFinger, material, usableDiv, usableDivLid,
                 alpha, bolt = 10) {
   boxX = size[0];
@@ -329,6 +327,16 @@ module keyHoleSpacer(screw = 3, len = 15) {
 }
 
 
+module standoff(d = 3, material = 3) {
+  color("purple")
+  difference() {
+    $fn = 36;
+    circle(r = (d+2)*1.2/2, center = true);
+    circle(r = (d*1.1)/2, center = true);
+  }
+}
+
+
 module myLayout2D(size, finger, lidFinger, material, usableDiv, usableDivLid,
                 bolt = 10) {
   boxX = size[0];
@@ -373,6 +381,11 @@ module myLayout2D(size, finger, lidFinger, material, usableDiv, usableDivLid,
   for (i = [-1:1]) {
   translate([boxX+separation+boxY+separation-20*i, 0, 0])
     keyHoleSpacer();
+  }
+
+  for (k = [0:9]) {
+    translate([boxX+2*separation+boxY+-boxX/2+20+k*(separation+1), -12, 0])
+      standoff();
   }
 
 
@@ -469,5 +482,5 @@ myBolt = 20;
 
 //myEnclosure(size = [88, 99, 66]);
 2D = true;
-2D = false;
+//2D = false;
 myEnclosure(2D = 2D);
