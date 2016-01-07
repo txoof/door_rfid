@@ -22,6 +22,8 @@
 
 include <../libraries/nuts_and_bolts.scad>
 
+o = 0.001; // overage
+
 module addBolts(length, finger, cutD, uDiv, bolt = 10) {
   numCuts = ceil(uDiv/2);
 
@@ -34,7 +36,7 @@ module addBolts(length, finger, cutD, uDiv, bolt = 10) {
 
 // cuts that fall completely inside the edge
 module insideCuts(length, finger, cutD, uDiv, bolt) {
-  o = 0.001; // overage to make the cuts complete
+  //o = 0.001; // overage to make the cuts complete
 
   //bolt = 10;
   //bolt = myBolt;
@@ -53,7 +55,7 @@ module insideCuts(length, finger, cutD, uDiv, bolt) {
 }
 
 module outsideCuts(length, finger, cutD, uDiv) {
-  o = 0.001; // overage to make cuts complete
+  //o = 0.001; // overage to make cuts complete
 
   numFinger = ceil(uDiv/2);
   numCuts = floor(uDiv/2);
@@ -170,12 +172,12 @@ module faceB(size, finger, lidFinger, material, usableDiv, usableDivLid,
     }
 
     // X+/- edge
-    translate([-boxX/2, boxY/2-material, 0])
+    translate([-boxX/2, boxY/2-material+o, 0])
       outsideCuts(length = boxX, finger = myFinger, cutD = material, uDiv = uDivX);
 
     //add extend tabs here
 
-    translate([-boxX/2, -boxY/2, 0])
+    translate([-boxX/2, -boxY/2-o, 0])
       outsideCuts(length = boxX, finger = myFinger, cutD = material, uDiv = uDivX);
 
     // Y+/- edge 
@@ -237,16 +239,16 @@ module faceC(size, finger, lidFinger, material, usableDiv, usableDivLid) {
 
     //Y+/- edge (X axis in OpenSCAD)
     // lid edge
-    translate([-boxY/2, boxZ/2-material, 0])
+    translate([-boxY/2, boxZ/2-material+o, 0])
       outsideCuts(length = boxY, finger = lidFinger, cutD = material, uDiv = uDivLY);
     // bottom edge
-    translate([-boxY/2, -boxZ/2, 0])
+    translate([-boxY/2, -boxZ/2-o, 0])
       outsideCuts(length = boxY, finger = finger, cutD = material, uDiv = uDivY);
 
     //Z+/- edge (Y axis in OpenSCAD)
-    translate([boxY/2-material, boxZ/2, 0]) rotate([0, 0, -90])
+    translate([boxY/2-material+o, boxZ/2, 0]) rotate([0, 0, -90])
       outsideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
-    translate([-boxY/2, boxZ/2, 0]) rotate([0, 0, -90])
+    translate([-boxY/2-o, boxZ/2, 0]) rotate([0, 0, -90])
       outsideCuts(length = boxZ, finger = finger, cutD = material, uDiv = uDivZ);
   }
 }
