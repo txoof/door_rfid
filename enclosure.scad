@@ -6,6 +6,7 @@
     * add wire routing for power, door access, RFID, etc.
     * check clearances with real shields
     * rewrite micro holder - train wreck
+    * update for new nuts and bolt library
 
 */
 
@@ -482,5 +483,5 @@ myBolt = 20;
 
 //myEnclosure(size = [88, 99, 66]);
 2D = true;
-//2D = false;
+2D = false;
 myEnclosure(2D = 2D);
